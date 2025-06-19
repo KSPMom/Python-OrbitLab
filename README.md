@@ -1,7 +1,11 @@
-# League Class Template
+# Python Orbit Lab 
 
-This repo is a template for League classes, and it is also a class that will
-teach you how to create a League Class. To get started, create a new
-repository from this template, then open it in a codespace. The 
-Codespace editor will open to the first lesson, 
-[which you can also read here](https://github.com/League-Examples/python-class-devcontainer/blob/master/lessons/10_Module_1/10_Getting_Started.ipynb)
+In Python Orbit lab, you can build your own space program while learning
+about the Physics of spaceflight. We will use Pygame to create interactive
+simulations of planets and rockets, while learning about gravity, force, aceleration
+and other physics concepts. 
+
+The prerequisite for this class is the 
+ [Python Games](https://github.com/league-curriculum/Python-Games) class, where you will 
+ learn the basics of vectors, velocity, acceleration and forces.
+

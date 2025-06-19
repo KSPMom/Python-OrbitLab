@@ -1,2 +1,6 @@
 jtl-syllabus
 ipykernel
+pymunk
+pygame
+numpy
+matplotlib
