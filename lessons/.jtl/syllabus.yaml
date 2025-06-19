@@ -1,0 +1,28 @@
+name: The Title of the Course, From the README Title
+description: Course description, from the README frontmatter
+module_dir: ..
+uid: d0f587da-5672-4c83-8a59-0d26494cf274
+modules:
+- name: Module 1
+  uid: SEewiY6I
+  lessons:
+  - name: Getting Started
+    uid: IUh3u37k
+    exercise: 01_Module_1/01_Getting_Started.ipynb
+  - name: Lesson Structure
+    uid: Xsz3sJlg
+    exercise: 01_Module_1/02_Lesson_Structure.ipynb
+- name: Module 2
+  uid: 9rhwJebP
+  lessons:
+  - name: Testing Your Class
+    uid: FeB2FgBc
+    exercise: 02_Module_2/01_Testing_Your_Class.ipynb
+- name: Examples
+  lessons:
+  - name: Lesson 1
+    lesson: 03_Examples/01_Lesson_1/README.md
+    exercise: 03_Examples/01_Lesson_1/Lesson_1.py
+  - name: Lesson 2
+    lesson: 03_Examples/02_Lesson_2/Lesson.md
+    exercise: 03_Examples/02_Lesson_2/Exercise.py
