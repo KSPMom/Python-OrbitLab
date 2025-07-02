@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "ipykernel>=6.29.5",
     "jtl-syllabus>=1.20250530.2",
+    "jupyterquiz>=2.9.6.2",
     "matplotlib>=3.10.3",
     "numpy>=2.3.0",
     "pygame>=2.6.1",

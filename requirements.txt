@@ -4,3 +4,4 @@ pymunk
 pygame
 numpy
 matplotlib
+jupyterquiz
