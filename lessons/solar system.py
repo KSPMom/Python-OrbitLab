@@ -7,7 +7,7 @@ pygame.init()
 # Constants
 SCREEN_WIDTH, SCREEN_HEIGHT = 600, 600
 d_T = 1 # timestep (delta time)
-G = 1
+G = 0.5
 
 # Set up the display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -54,32 +54,27 @@ class Planet:
             self.vel = pygame.math.Vector2(0,0)
         
 
-
-
-
-
-
-        self.d = pygame.math.Vector2.distance_squared_to(self.pos, sun.pos)
-        self.a = pygame.math.Vector2.angle_to(self.pos, sun.pos)
-        
-        
-        self.f = ((G * self.mass * sun.mass) / self.d) * 0.0001
-        print(self.f)
-        # self.force = pygame.math.Vector2(self.f * math.sin(self.a), self.f * math.cos(self.a))
-        
-        self.acl += self.force
+        self.r2 = self.pos.distance_squared_to(sun.pos)
+        self.theta = 180-(self.pos-sun.pos).angle_to(sun.pos-sun.pos)
+        self.f = ((G * self.mass * sun.mass) / self.r2)
+        self.force = pygame.math.Vector2.from_polar((self.f, self.theta))
+        self.force = pygame.math.Vector2(self.force.x, self.force.y)
+        self.acl = self.force / self.mass
         self.vel += self.acl * d_T
         self.pos += self.vel * d_T
         pygame.draw.circle(screen, self.color, self.pos, self.radius)
-
+        
 
 
 # Main loop
 running = True
 
 # things
-earth = Planet(300, 100, 0, 0, (0,0,255), 10, 100)
+earth = Planet(300, 500, 1.5, 0, (0,0,255), 10, 100)
+calidor = Planet(300, 400, 2.2, 0, (255,0,0), 8, 78)
 sun = Star(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, (255, 255, 0), 50, 1000)
+interloper = Planet(300, 350, 4.2, 0, (200,200,255), 2, 15)
+
 
 
 while running:
@@ -93,6 +88,8 @@ while running:
     screen.fill((0,0,0))
     sun.update()
     earth.update()
+    calidor.update()
+    interloper.update()
     pygame.display.flip()
     pygame.time.Clock().tick(60)
 
