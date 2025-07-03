@@ -58,7 +58,7 @@ class Planet:
 
         f_g = ((G * self.mass * sun.mass) / r2)
 
-        theta = (self.pos-sun.pos).angle_to(sun.pos-sun.pos)
+        theta = 180-(self.pos-sun.pos).angle_to(sun.pos-sun.pos)
 
         f = pygame.math.Vector2.from_polar( (f_g , theta))
 
