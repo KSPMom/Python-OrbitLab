@@ -49,12 +49,11 @@ class Planet(CelestialBody):
 
         """
 
-        super().__init__(position, color, radius, mass)
-
         self.sun = sun  # Reference to the star this planet orbits
 
-        # Position of the sun, initialized to (0,0) for relative calculations
-        self.sun_pos = pygame.Vector2( (0,0) )  # Position of the sun
+
+        super().__init__(position + self.sun.pos, color, radius, mass)
+
 
         self.force = pygame.Vector2(0, 0)
         # Convert velocity to Vector2 if it's a tuple
@@ -74,24 +73,18 @@ class Planet(CelestialBody):
             # If it fails, assume it's a Vector2 or similar
             return other - self.pos 
 
-    def drawing_pos(self):
-        """Return the drawing position of the planet, which is its position on the screen"""
 
-        # The self.pos is relative to the sun's position, so we add the sun's
-        # position to get the actual screen position This allows the planet to
-        # be drawn in the correct position relative to the sun
-        return self.pos + self.sun.pos
 
     def update(self):
 
         # squared distance to the sun. 
-        r2 = self.pos.distance_squared_to(self.sun_pos)
+        r2 = self.pos.distance_squared_to(self.sun.pos)
 
         # Force of gravity to the sun
         f_g = (G * self.mass * self.sun.mass) / r2
 
         # Calculate the force vector pointing towards the sun
-        f = self.vector_to(self.sun_pos) * f_g
+        f = self.vector_to(self.sun.pos) * f_g
 
         # Acelleration of the planet
         a = f / self.mass
@@ -99,12 +92,12 @@ class Planet(CelestialBody):
         self.vel += a * d_T
         self.pos += self.vel * d_T
 
-        print(self.drawing_pos(), self.sun_pos, f)
+        print(self.pos, self.sun.pos, f)
 
-        pygame.draw.circle(screen, self.color,self.drawing_pos(), self.radius)
+        pygame.draw.circle(screen, self.color,self.pos, self.radius)
 
-        pygame.draw.line(screen, RED, self.drawing_pos(), self.drawing_pos() + f * 20, 2)   # Force vector
-        pygame.draw.line(screen, GREEN, self.drawing_pos(), self.drawing_pos() + self.vel * 20, 2)  # Velocity vector
+        pygame.draw.line(screen, RED, self.pos, self.pos + f * 20, 2)   # Force vector
+        pygame.draw.line(screen, GREEN, self.pos, self.pos + self.vel * 20, 2)  # Velocity vector
 
 
 # Main loop
@@ -114,6 +107,7 @@ running = True
 
 sun = Star((SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), (255, 255, 0), 20, 1000)
 
+# The planet's position is defined relative to the sun. 
 earth = Planet(sun,  (0, -200), (-1, 0), (0,0,255), 10, 100)
 
 
