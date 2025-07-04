@@ -86,7 +86,7 @@ class Planet(CelestialBody):
         # Calculate the force vector pointing towards the sun
         f = self.vector_to(self.sun.pos) * f_g
 
-        # Acelleration of the planet
+        # Acceleration of the planet
         a = f / self.mass
        
         self.vel += a * d_T
