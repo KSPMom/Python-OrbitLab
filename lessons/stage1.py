@@ -51,29 +51,14 @@ class Planet(CelestialBody):
 
         self.sun = sun  # Reference to the star this planet orbits
 
-
         super().__init__(position + self.sun.pos, color, radius, mass)
 
-
-        self.force = pygame.Vector2(0, 0)
         # Convert velocity to Vector2 if it's a tuple
-        if isinstance(velocity, tuple):
-            self.vel = pygame.Vector2(velocity[0], velocity[1])
-        else:
-            self.vel = pygame.Vector2(velocity)
-        self.acl = pygame.Vector2(0, 0)
         
-    def vector_to(self, other: CelestialBody|pygame.Vector2):
-        """Calculate the vector pointing from this planet to another celestial body."""
-
-        try:
-            # Guess that the Other object is a CelestialBody
-            return other.pos - self.pos
-        except AttributeError:
-            # If it fails, assume it's a Vector2 or similar
-            return other - self.pos 
+        self.vel = pygame.Vector2(*velocity) if isinstance(velocity, tuple) else velocity
 
 
+        
 
     def update(self):
 
@@ -84,7 +69,7 @@ class Planet(CelestialBody):
         f_g = (G * self.mass * self.sun.mass) / r2
 
         # Calculate the force vector pointing towards the sun
-        f = self.vector_to(self.sun.pos) * f_g
+        f =  (self.sun.pos - self.pos) * f_g
 
         # Acceleration of the planet
         a = f / self.mass
