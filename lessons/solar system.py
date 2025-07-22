@@ -78,10 +78,10 @@ running = True
 
 # things
 earth = Planet(300, 400, 29780, 0, (0,0,255), 2, EARTH_M)
-earth2 = Planet(300, 404, 29780, 0, (0,0,255), 2, SUN_M)
+#earth2 = Planet(300, 404, 29780, 0, (0,0,255), 2, SUN_M)
 sun = Planet(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 0, 0, (255, 255, 0), 20, SUN_M)
 luna = Planet(300, 400 + 0.25695552898, 29780 + 1018, 0, (200,200,200), 1, MOON_M)
-bodies = [earth, earth2, sun, luna]
+bodies = [earth, sun, luna]
 
 while running:
     for event in pygame.event.get():
@@ -94,13 +94,13 @@ while running:
     screen.fill((0,0,0))
     for i in range(d_T_int_step):
         earth.update(d_T_int_step, bodies)
-        earth2.update(d_T_int_step, bodies)
+        #earth2.update(d_T_int_step, bodies)
         luna.update(d_T_int_step, bodies)
         sun.update(d_T_int_step, bodies)
 
     
     earth.draw()
-    earth2.draw()
+    #earth2.draw()
     luna.draw()
     sun.draw()
     frames += 1
