@@ -63,59 +63,69 @@ class Planet:
     def draw(self):
         pygame.draw.circle(screen, self.color, self.pos + offset, self.radius)
 
+class Simulation:
+    def __init__(self):
+        pass
 
-# Main loop
-running = True
+    def run(self):
+        # Main loop
+        running = True
 
-# things
-earth = Planet(300, 400, 29780, 0, (0,0,255), 2, EARTH_M)
-sun = Planet(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1000, 0, (255, 255, 0), 20, SUN_M)
-luna = Planet(300, 400 + 0.25695552898, 29780 + 1018, 0, (200,200,200), 1, MOON_M)
-bodies = [earth, sun, luna]
+        # things
+        earth = Planet(300, 400, 29780, 0, (0,0,255), 2, EARTH_M)
+        sun = Planet(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1000, 0, (255, 255, 0), 20, SUN_M)
+        luna = Planet(300, 400 + 0.25695552898, 29780 + 1018, 0, (200,200,200), 1, MOON_M)
+        bodies = [earth, sun, luna]
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    
+                    running = False
+                
             
-            running = False
-         
-    
 
-    screen.fill((0,0,0))
-    for i in range(d_T_int_step):
-        earth.update(d_T_int_step, bodies)
-        luna.update(d_T_int_step, bodies)
-        sun.update(d_T_int_step, bodies)
-    
-    keys = pygame.key.get_pressed()
-    CoM = ((sun.pos * sun.mass + earth.pos * earth.mass + luna.pos * luna.mass) / (sun.mass + earth.mass + luna.mass))
-    if keys[pygame.K_a]:
-        offset += pygame.math.Vector2(10,0)
-    if keys[pygame.K_d]:
-        offset += pygame.math.Vector2(-10,0)
-    if keys[pygame.K_w]:
-        offset += pygame.math.Vector2(0,10)
-    if keys[pygame.K_s]:
-        offset += pygame.math.Vector2(0,-10)
-    if keys[pygame.K_SPACE]:
-        if track_CoM == False:
-            track_CoM = True
-        else:
-            track_CoM = False
-    if track_CoM == True:
-        offset = -(CoM - pygame.math.Vector2(300,300))
-    print(track_CoM)
-    
-    
-    earth.draw()
-    luna.draw()
-    sun.draw()
-    frames += 1
-    #print("frames elapsed:",frames)
+            screen.fill((0,0,0))
+            for i in range(d_T_int_step):
+                earth.update(d_T_int_step, bodies)
+                luna.update(d_T_int_step, bodies)
+                sun.update(d_T_int_step, bodies)
+            
+            keys = pygame.key.get_pressed()
+            CoM = ((sun.pos * sun.mass + earth.pos * earth.mass + luna.pos * luna.mass) / (sun.mass + earth.mass + luna.mass))
+            if keys[pygame.K_a]:
+                offset += pygame.math.Vector2(10,0)
+            if keys[pygame.K_d]:
+                offset += pygame.math.Vector2(-10,0)
+            if keys[pygame.K_w]:
+                offset += pygame.math.Vector2(0,10)
+            if keys[pygame.K_s]:
+                offset += pygame.math.Vector2(0,-10)
+            if keys[pygame.K_SPACE]:
+                if track_CoM == False:
+                    track_CoM = True
+                else:
+                    track_CoM = False
+            if track_CoM == True:
+                offset = -(CoM - pygame.math.Vector2(300,300))
+            
+            
+            earth.draw()
+            luna.draw()
+            sun.draw()
+            frames += 1
+            #print("frames elapsed:",frames)
 
 
-    pygame.display.flip()
-    pygame.time.Clock().tick(60)
+            pygame.display.flip()
+            pygame.time.Clock().tick(60)
 
-# Quit Pygame
-pygame.quit()
+        # Quit Pygame
+        pygame.quit()
+
+sim = Simulation()
+sim.run()
+
+
+
+
