@@ -4,23 +4,9 @@ import math
 # Initialize Pygame
 pygame.init()
 print("PROGRAM INITALIZED")
-
-# Constants
-SCREEN_WIDTH, SCREEN_HEIGHT = 600, 600
-d_T = 100 * 86400 / 60 # timestep (delta time)
-d_T_int_step = 1000
-G = 6.6743e-11
-EARTH_M = 5.972e+24
-SUN_M = 1.9891e+30
-MOON_M = 7.34767309e+22
-METERS_PER_PIXEL = 1.496e+9
-frames = 0
-offset = pygame.math.Vector2(0,0)
-track_CoM = False
-
 # Set up the display
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Solar System")
+
+
 
 class Planet:
     def __init__(self, x_pos: float, y_pos: float, x_vel: float, y_vel: float, color: tuple, radius: int, mass: int):
@@ -33,9 +19,9 @@ class Planet:
         self.acl = pygame.Vector2(0, 0)
         
     def calc_force(self, other: "Planet"):
-        self.r2 = (self.pos.distance_to(other.pos) * METERS_PER_PIXEL)**2
+        self.r2 = (self.pos.distance_to(other.pos) * sim.METERS_PER_PIXEL)**2
         self.theta = 180-(self.pos-other.pos).angle_to(other.pos-other.pos)
-        self.f = ((G * self.mass * other.mass) / self.r2)
+        self.f = ((sim.G * self.mass * other.mass) / self.r2)
         self.force_i = pygame.math.Vector2.from_polar((self.f, self.theta))
         return self.force_i
     
@@ -53,28 +39,42 @@ class Planet:
                 continue
 
         self.acl = self.force / self.mass
-        self.vel += self.acl * d_T / d_T_int_step
-        self.pos += self.vel / METERS_PER_PIXEL * d_T / d_T_int_step
+        self.vel += self.acl * sim.d_T / d_T_int_step
+        self.pos += self.vel / sim.METERS_PER_PIXEL * sim.d_T / d_T_int_step
         
         #print("vel:",self.vel)
         #print("pos:",self.pos)
         #print("acl:",self.acl)
         
     def draw(self):
-        pygame.draw.circle(screen, self.color, self.pos + offset, self.radius)
+        pygame.draw.circle(screen, self.color, (self.pos / sim.zoom) + sim.offset, self.radius / sim.zoom)
 
 class Simulation:
     def __init__(self):
-        pass
+        # Constants
+        self.SCREEN_WIDTH, self.SCREEN_HEIGHT = 600, 600
+        self.d_T = 10 * 86400 / 60 # timestep (delta time)
+        self.d_T_int_step = 100
+        self.G = 6.6743e-11
+        self.EARTH_M = 5.972e+24
+        self.SUN_M = 1.9891e+30
+        self.MOON_M = 7.34767309e+22
+        self.METERS_PER_PIXEL = 1.496e+9
+        self.offset = pygame.math.Vector2(0,0)
+        self.track_CoM = False
+        self.track_planet = False
+        self.zoom = 1
+
+        
 
     def run(self):
         # Main loop
         running = True
 
         # things
-        earth = Planet(300, 400, 29780, 0, (0,0,255), 2, EARTH_M)
-        sun = Planet(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, 1000, 0, (255, 255, 0), 20, SUN_M)
-        luna = Planet(300, 400 + 0.25695552898, 29780 + 1018, 0, (200,200,200), 1, MOON_M)
+        earth = Planet(300, 400, 29780, 0, (0,0,255), 2, self.EARTH_M)
+        sun = Planet(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2, 1000, 0, (255, 255, 0), 20, self.SUN_M)
+        luna = Planet(300, 400 + 0.25695552898, 29780 + 1018, 0, (200,200,200), 1, self.MOON_M)
         bodies = [earth, sun, luna]
 
         while running:
@@ -86,36 +86,50 @@ class Simulation:
             
 
             screen.fill((0,0,0))
-            for i in range(d_T_int_step):
-                earth.update(d_T_int_step, bodies)
-                luna.update(d_T_int_step, bodies)
-                sun.update(d_T_int_step, bodies)
+            for self.i in range(self.d_T_int_step):
+                earth.update(self.d_T_int_step, bodies)
+                luna.update(self.d_T_int_step, bodies)
+                sun.update(self.d_T_int_step, bodies)
             
             keys = pygame.key.get_pressed()
-            CoM = ((sun.pos * sun.mass + earth.pos * earth.mass + luna.pos * luna.mass) / (sun.mass + earth.mass + luna.mass))
+            CoM = ((sun.pos * sun.mass + earth.pos * earth.mass + luna.pos * luna.mass) / (sun.mass + earth.mass + luna.mass)) / sim.zoom
             if keys[pygame.K_a]:
-                offset += pygame.math.Vector2(10,0)
+                sim.offset += (pygame.math.Vector2(10,0))
             if keys[pygame.K_d]:
-                offset += pygame.math.Vector2(-10,0)
+                sim.offset += (pygame.math.Vector2(-10,0))
             if keys[pygame.K_w]:
-                offset += pygame.math.Vector2(0,10)
+                sim.offset += (pygame.math.Vector2(0,10))
             if keys[pygame.K_s]:
-                offset += pygame.math.Vector2(0,-10)
+                sim.offset += (pygame.math.Vector2(0,-10))
             if keys[pygame.K_SPACE]:
-                if track_CoM == False:
-                    track_CoM = True
+                if self.track_CoM == False:
+                    self.track_CoM = True
                 else:
-                    track_CoM = False
-            if track_CoM == True:
-                offset = -(CoM - pygame.math.Vector2(300,300))
+                    self.track_CoM = False
+            if self.track_CoM == True:
+                sim.offset = -(CoM - pygame.math.Vector2(300,300))
+            if keys[pygame.K_z]:
+                sim.zoom += 0.01
+            if keys[pygame.K_x]:
+                sim.zoom -= 0.01
+
+            if keys[pygame.K_c]:
+                if self.track_planet == False:
+                    self.track_planet = True
+                else:
+                    self.track_planet = False
             
+            if self.track_planet == True:
+                sim.offset = -(earth.pos / sim.zoom - pygame.math.Vector2(300,300))
+
+
+
+
+            print(sim.zoom)
             
+            sun.draw()
             earth.draw()
             luna.draw()
-            sun.draw()
-            frames += 1
-            #print("frames elapsed:",frames)
-
 
             pygame.display.flip()
             pygame.time.Clock().tick(60)
@@ -123,7 +137,12 @@ class Simulation:
         # Quit Pygame
         pygame.quit()
 
+
+
+
 sim = Simulation()
+screen = pygame.display.set_mode((sim.SCREEN_WIDTH, sim.SCREEN_HEIGHT))
+pygame.display.set_caption("Solar System")
 sim.run()
 
 
