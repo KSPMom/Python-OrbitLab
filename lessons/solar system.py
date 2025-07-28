@@ -47,7 +47,7 @@ class Planet:
         #print("acl:",self.acl)
         
     def draw(self):
-        pygame.draw.circle(screen, self.color, (self.pos / sim.zoom) + sim.offset, self.radius / sim.zoom)
+        pygame.draw.circle(screen, self.color, (self.pos * sim.zoom) + sim.offset, self.radius * sim.zoom)
 
 class Simulation:
     def __init__(self):
@@ -71,10 +71,10 @@ class Simulation:
         # Main loop
         running = True
 
-        # things
-        earth = Planet(300, 400, 29780, 0, (0,0,255), 2, self.EARTH_M)
-        sun = Planet(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2, 1000, 0, (255, 255, 0), 20, self.SUN_M)
-        luna = Planet(300, 400 + 0.25695552898, 29780 + 1018, 0, (200,200,200), 1, self.MOON_M)
+        # Objects; object radii are 5 times real size
+        earth = Planet(300, 400, 29780, 0, (0,0,255), 0.02, self.EARTH_M)
+        sun = Planet(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2.5, 1000, 0, (255, 255, 0), 2, self.SUN_M)
+        luna = Planet(300, 400 + 0.25695552898, 29780 + 1018, 0, (200,200,200), 0.005, self.MOON_M)
         bodies = [earth, sun, luna]
 
         while running:
@@ -92,7 +92,7 @@ class Simulation:
                 sun.update(self.d_T_int_step, bodies)
             
             keys = pygame.key.get_pressed()
-            CoM = ((sun.pos * sun.mass + earth.pos * earth.mass + luna.pos * luna.mass) / (sun.mass + earth.mass + luna.mass)) / sim.zoom
+            CoM = ((sun.pos * sun.mass + earth.pos * earth.mass + luna.pos * luna.mass) / (sun.mass + earth.mass + luna.mass)) * sim.zoom
             if keys[pygame.K_a]:
                 sim.offset += (pygame.math.Vector2(10,0))
             if keys[pygame.K_d]:
@@ -109,9 +109,9 @@ class Simulation:
             if self.track_CoM == True:
                 sim.offset = -(CoM - pygame.math.Vector2(300,300))
             if keys[pygame.K_z]:
-                sim.zoom += 0.01
+                sim.zoom += 0.5
             if keys[pygame.K_x]:
-                sim.zoom -= 0.01
+                sim.zoom -= 0.5
 
             if keys[pygame.K_c]:
                 if self.track_planet == False:
@@ -120,12 +120,12 @@ class Simulation:
                     self.track_planet = False
             
             if self.track_planet == True:
-                sim.offset = -(earth.pos / sim.zoom - pygame.math.Vector2(300,300))
+                sim.offset = -(earth.pos * sim.zoom - pygame.math.Vector2(300,300))
 
 
 
 
-            print(sim.zoom)
+            print(1 * sim.zoom)
             
             sun.draw()
             earth.draw()
